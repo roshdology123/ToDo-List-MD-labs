@@ -47,13 +47,56 @@ class _AddTaskDetailViewState extends State<AddTaskDetailView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildTitleField(),
+            TextInput(
+              controller: _titleController,
+              label: 'Task Title',
+              icon: Icons.title,
+            ),
             const SizedBox(height: 16),
-            _buildDescriptionField(),
+            TextInput(
+              controller: _descriptionController,
+              icon: Icons.description,
+              label: 'Task Description',
+              maxLines: 3,
+              maxLength: 300,
+            ),
             const SizedBox(height: 16),
-            _buildDueDatePicker(),
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    _selectedDate == null
+                        ? 'No due date'
+                        : 'Due: ${DateFormat('dd MMM yyyy').format(_selectedDate!)}',
+                    style: const TextStyle(fontSize: 16),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.calendar_today, color: heavyTurquoise),
+                  onPressed: _showDatePicker,
+                ),
+              ],
+            ),
             const SizedBox(height: 16),
-            _buildPrioritySelector(),
+            Row(
+              children: [
+                const Text('Priority:', style: TextStyle(fontSize: 16)),
+                const SizedBox(width: 16),
+                ...TaskPriority.values.map((priority) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      child: ChoiceChip(
+                        label: Text(_getPriorityText(priority)),
+                        selected: _selectedPriority == priority,
+                        onSelected: (_) {
+                          setState(() {
+                            _selectedPriority = priority;
+                          });
+                        },
+                        selectedColor: _getPriorityColor(priority),
+                      ),
+                    )),
+              ],
+            ),
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: _saveTask,
@@ -72,65 +115,6 @@ class _AddTaskDetailViewState extends State<AddTaskDetailView> {
           ],
         ),
       ),
-    );
-  }
-
-  _buildTitleField() {
-    return TextInput(
-      controller: _titleController,
-      label: 'Task Title',
-      icon: Icons.title,
-    );
-  }
-
-  Widget _buildDescriptionField() {
-    return TextInput(
-      controller: _descriptionController,
-      icon: Icons.description,
-      label: 'Task Description',
-      maxLines: 3,
-      maxLength: 300,
-    );
-  }
-
-  Widget _buildDueDatePicker() {
-    return Row(
-      children: [
-        Expanded(
-          child: Text(
-            _selectedDate == null
-                ? 'No due date'
-                : 'Due: ${DateFormat('dd MMM yyyy').format(_selectedDate!)}',
-            style: const TextStyle(fontSize: 16),
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.calendar_today, color: heavyTurquoise),
-          onPressed: _showDatePicker,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPrioritySelector() {
-    return Row(
-      children: [
-        const Text('Priority:', style: TextStyle(fontSize: 16)),
-        const SizedBox(width: 16),
-        ...TaskPriority.values.map((priority) => Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 4),
-              child: ChoiceChip(
-                label: Text(_getPriorityText(priority)),
-                selected: _selectedPriority == priority,
-                onSelected: (_) {
-                  setState(() {
-                    _selectedPriority = priority;
-                  });
-                },
-                selectedColor: _getPriorityColor(priority),
-              ),
-            )),
-      ],
     );
   }
 
